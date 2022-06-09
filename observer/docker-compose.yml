@@ -1,0 +1,20 @@
+services:
+  nginx:
+    build:
+      context: .
+      args:
+        OBCONF_PASS: mypass
+        OBCONF_EMAIL: markblashki1@gmail.com
+        MYSQL_PASS: mysqlpass
+        OB_UPDATES_PW: myupdatespass
+        OBCONF_URL: http://localhost
+        OBCONF_SALT: SALTYSTATLSSD
+    volumes:
+      - ./config/observer.conf:/etc/nginx/sites-available/observer.conf
+      # - ./www:/var/www/html/
+      - ./startup.sh:/home/startup.sh
+    ports:
+      - "8080:80"
+    environment:
+      NGINX_HOST: localhost
+      NGINX_PORT: 8080
