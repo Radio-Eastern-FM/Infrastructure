@@ -1,2 +1,43 @@
-infra:
-  
+services:
+##### STUDIO DASHBOARD
+  studio-dashboard:
+    build: 
+      context: ./studio-dashboard/dashboard
+    ports:
+      - 3000:80
+  event-source:
+    build: 
+      context: ./studio-dashboard/event-source
+    container_name: event-source
+    links:
+      - mqtt
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPEN_WEATHER_API_KEY=${OPEN_WEATHER_API_KEY}
+    volumes:
+      - ./event_source:/usr/src/app
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ./studio-dashboard/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./studio-dashboard/mqtt/EFM_passwords.conf:/mosquitto/config/EFM_passwords.conf
+##### OB-SERVER
+  ob-server-nginx:
+    build:
+      context: ./observer
+      args:
+        OBCONF_PASS: ${OBCONF_PASS}
+        OBCONF_EMAIL: ${OBCONF_EMAIL}
+        MYSQL_PASS: ${MYSQL_PASS}
+        OB_UPDATES_PW: ${OB_UPDATES_PW}
+        OBCONF_URL: ${OBCONF_URL}
+        OBCONF_SALT: ${OBCONF_SALT}
+    volumes:
+      - ./observer/nginx/observer.conf:/etc/nginx/sites-available/observer.conf
+      - ./observer/startup.sh:/home/startup.sh
+    ports:
+      - "8080:80"
