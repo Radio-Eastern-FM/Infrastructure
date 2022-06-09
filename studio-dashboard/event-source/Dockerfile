@@ -2,11 +2,14 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
-ENV REPOSITORY=https://github.com/Radio-Eastern-FM/Event-Source-Service.git
+ARG REPOSITORY=https://github.com/Radio-Eastern-FM/Event-Source-Service.git
+ENV REPOSITORY=$REPOSITORY
 
-RUN export commit_id="$(git ls-remote $REPOSITORY master)"
+ARG COMMIT
+ENV COMMIT=$COMMIT
+
 RUN git clone $REPOSITORY .
-
+RUN git checkout $COMMIT
 
 RUN pip install --no-cache-dir -r requirements.txt
 

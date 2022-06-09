@@ -8,8 +8,11 @@ services:
   event-source:
     build: 
       context: ./studio-dashboard/event-source
+      args:
+        - COMMIT=d78a126
+        - REPOSITORY=https://github.com/Radio-Eastern-FM/Event-Source-Service.git
     container_name: event-source
-    links:
+    depends_on:
       - mqtt
     environment:
       - PYTHONUNBUFFERED=1
