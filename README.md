@@ -10,10 +10,15 @@ This repository contains docker files that automatically build and deploy the in
 
 ### Build
 
-`docker-compose build`
+Build all services: `docker-compose build`
+Build specific service: `docker-compose build <service>` e.g. `docker-compose build observer`
 
 ### Run
-`docker-compose up`
+
+Run all services: `docker-compose up`
+
+Run a specific service: `docker-compose up <service>` e.g. `docker-compose up observer`
 
 ### Stop
+
 `docker-compose down`

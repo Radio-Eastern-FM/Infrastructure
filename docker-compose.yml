@@ -14,8 +14,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - OPEN_WEATHER_API_KEY=${OPEN_WEATHER_API_KEY}
-    volumes:
-      - ./event_source:/usr/src/app
   mqtt:
     image: eclipse-mosquitto
     container_name: mqtt
