@@ -86,6 +86,24 @@ ENV COMMIT=$COMMIT
 RUN git clone $REPOSITORY /var/www/html
 RUN git checkout $COMMIT
 
+ARG MODULE_NAMES
+ARG MODULE_REPOSITORIES
+
+SHELL ["/bin/bash", "-c"]
+
+RUN \
+declare -a MODULES=$MODULE_NAMES;\
+declare -a REPOS=$MODULE_REPOSITORIES;\
+INDEX=0;\
+for module in $MODULES; do \
+  repository=${REPOS[$INDEX]};\
+  echo "Installing module $INDEX: '$module' from '$repository'";\
+  git clone $repository /var/www/html/modules/$module; \
+  INDEX=$((INDEX + 1));\
+done;
+
+SHELL ["/bin/sh", "-c"]
+
 RUN echo '\
 <?php\n\
 const OB_HASH_SALT = "'$OBCONF_SALT'";\n\

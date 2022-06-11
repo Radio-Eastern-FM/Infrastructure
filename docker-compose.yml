@@ -42,8 +42,11 @@ services:
         OBCONF_SALT: ${OBCONF_SALT}
         COMMIT: 1869edd
         REPOSITORY: https://github.com/openbroadcaster/observer.git
+        MODULE_NAMES: "bulk_import ob2ob data_and_statistics rds"
+        MODULE_REPOSITORIES: "('https://github.com/openbroadcaster/bulk-import' 'https://github.com/openbroadcaster/ob2ob' 'https://github.com/openbroadcaster/statistics' 'https://github.com/openbroadcaster/rds')"
     volumes:
       - ./observer/nginx/observer.conf:/etc/nginx/sites-available/observer.conf
       - ./observer/startup.sh:/home/startup.sh
+      # - ./observer/www:/var/www/html
     ports:
       - "8080:80"
