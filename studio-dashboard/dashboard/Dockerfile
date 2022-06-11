@@ -3,7 +3,14 @@ FROM node:14 AS builder
 # set working directory
 WORKDIR /app
 
-RUN git clone https://github.com/Radio-Eastern-FM/Studio-Dashboard.git .
+ARG REPOSITORY=https://github.com/Radio-Eastern-FM/Studio-Dashboard.git
+ENV REPOSITORY=$REPOSITORY
+
+ARG COMMIT
+ENV COMMIT=$COMMIT
+
+RUN git clone $REPOSITORY .
+RUN git checkout $COMMIT
 
 RUN npm ci
 

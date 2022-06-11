@@ -77,7 +77,14 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/
 # Link available config to enabled NGINX directory
 RUN ln -s /etc/nginx/sites-available/observer.conf /etc/nginx/sites-enabled/
 
-RUN git clone https://git@github.com/openbroadcaster/observer.git /var/www/html
+ARG REPOSITORY=https://github.com/openbroadcaster/observer.git
+ENV REPOSITORY=$REPOSITORY
+
+ARG COMMIT
+ENV COMMIT=$COMMIT
+
+RUN git clone $REPOSITORY /var/www/html
+RUN git checkout $COMMIT
 
 RUN echo '\
 <?php\n\

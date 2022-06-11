@@ -3,14 +3,17 @@ services:
   studio-dashboard:
     build: 
       context: ./studio-dashboard/dashboard
+      args:
+        COMMIT: 70033f5
+        REPOSITORY: https://github.com/Radio-Eastern-FM/Studio-Dashboard.git
     ports:
       - 3000:80
   event-source:
     build: 
       context: ./studio-dashboard/event-source
       args:
-        - COMMIT=d78a126
-        - REPOSITORY=https://github.com/Radio-Eastern-FM/Event-Source-Service.git
+        COMMIT: d78a126
+        REPOSITORY: https://github.com/Radio-Eastern-FM/Event-Source-Service.git
     container_name: event-source
     depends_on:
       - mqtt
@@ -37,6 +40,8 @@ services:
         OB_UPDATES_PW: ${OB_UPDATES_PW}
         OBCONF_URL: ${OBCONF_URL}
         OBCONF_SALT: ${OBCONF_SALT}
+        COMMIT: 1869edd
+        REPOSITORY: https://github.com/openbroadcaster/observer.git
     volumes:
       - ./observer/nginx/observer.conf:/etc/nginx/sites-available/observer.conf
       - ./observer/startup.sh:/home/startup.sh
