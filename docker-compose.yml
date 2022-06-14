@@ -30,7 +30,7 @@ services:
       - ./studio-dashboard/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./studio-dashboard/mqtt/EFM_passwords.conf:/mosquitto/config/EFM_passwords.conf
 ##### OB-SERVER
-  ob-server-nginx:
+  ob-server:
     build:
       context: ./observer
       args:
@@ -50,3 +50,13 @@ services:
       # - ./observer/www:/var/www/html
     ports:
       - "8080:80"
+  ob-player:
+    depends_on:
+      - ob-server
+    build:
+      context: ./obplayer
+      args:
+        REPOSITORY: https://github.com/openbroadcaster/obplayer.git
+        COMMIT: c971548
+    ports:
+      - "8081:80"
