@@ -2,11 +2,21 @@
 
 This repository contains docker files that automatically build and deploy the internal station infrastructure for Radio Eastern
 
-## Prerequisites
-
-* Docker
 
 ## Instructions
+
+## Install
+
+### Prerequisites
+
+* Docker
+* git
+
+1. Install docker
+2. Clone repository using git `git clone https://github.com/Radio-Eastern-FM/Infrastructure.git`
+3. CD to "Infrastructure": `cd ./Infrastructure`
+4. Run docker daemon (depends on OS version; see https://docs.docker.com/config/daemon/)
+5. Build & run (see below)
 
 ### Build
 
