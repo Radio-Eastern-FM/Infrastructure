@@ -48,7 +48,7 @@ services:
     volumes:
       - ./observer/nginx/observer.conf:/etc/nginx/sites-available/observer.conf
       - ./observer/startup.sh:/home/startup.sh
-      # - ./observer/www:/var/www/html
+      - ./observer/www:/var/www/html
     ports:
       - "8080:80"
   ob-player:
@@ -61,3 +61,7 @@ services:
         COMMIT: c971548
     ports:
       - "8081:80"
+  telemetry:
+    image: otel/opentelemetry-collector-contrib
+    volumes:
+      - ./telemetry/config.yaml:/etc/otel/config.yaml
