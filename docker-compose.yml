@@ -61,6 +61,14 @@ services:
         COMMIT: c971548
     ports:
       - "8081:80"
+  belt:
+    build: 
+      context: ./belt
+      args:
+        COMMIT: 5c51fa4
+        REPOSITORY: https://github.com/Radio-Eastern-FM/Belt.git
+    ports:
+      - 3001:80
   telemetry:
     image: otel/opentelemetry-collector-contrib
     volumes:
