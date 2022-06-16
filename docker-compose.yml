@@ -65,8 +65,12 @@ services:
     build: 
       context: ./belt
       args:
-        COMMIT: 5c51fa4
+        COMMIT: c7d7f06
         REPOSITORY: https://github.com/Radio-Eastern-FM/Belt.git
+    depends_on:
+      - ob-server
+      - ob-player
+      - studio-dashboard
     ports:
       - 3001:80
   telemetry:
