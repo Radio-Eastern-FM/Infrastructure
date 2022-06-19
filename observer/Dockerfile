@@ -108,7 +108,7 @@ RUN echo '\
 <?php\n\
 const OB_HASH_SALT = "'$OBCONF_SALT'";\n\
 const OB_DB_USER = "'$USER'";\n\
-const OB_DB_PASS = "'$MYSQL_PASS'";\n\
+const OB_DB_PASS = "'$OB_DB_PASS'";\n\
 const OB_DB_HOST = "localhost:3306";\n\
 const OB_DB_NAME = "'$DBNAME'";\n\
 const OB_MEDIA = "/home/media";\n\

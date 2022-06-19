@@ -5,8 +5,10 @@ services:
     build: 
       context: ./studio-dashboard/dashboard
       args:
-        COMMIT: 70033f5
+        COMMIT: d48fabd
         REPOSITORY: https://github.com/Radio-Eastern-FM/Studio-Dashboard.git
+    restart: always
+    container_name: studio-dashboard
     ports:
       - 3000:80
   event-source:
@@ -15,6 +17,7 @@ services:
       args:
         COMMIT: d78a126
         REPOSITORY: https://github.com/Radio-Eastern-FM/Event-Source-Service.git
+    restart: always
     container_name: event-source
     depends_on:
       - mqtt
@@ -23,6 +26,7 @@ services:
       - OPEN_WEATHER_API_KEY=${OPEN_WEATHER_API_KEY}
   mqtt:
     image: eclipse-mosquitto
+    restart: always
     container_name: mqtt
     ports:
       - 1883:1883
@@ -32,12 +36,17 @@ services:
       - ./studio-dashboard/mqtt/EFM_passwords.conf:/mosquitto/config/EFM_passwords.conf
 ##### OB-SERVER
   ob-server:
+    restart: always
+    container_name: ob-server
     build:
       context: ./observer
       args:
         OBCONF_PASS: ${OBCONF_PASS}
         OBCONF_EMAIL: ${OBCONF_EMAIL}
-        MYSQL_PASS: ${MYSQL_PASS}
+        OB_DB_USER: X
+        OB_DB_PASS: ${MYSQL_PASS}
+        OB_DB_HOST: X
+        OB_DB_NAME: X
         OB_UPDATES_PW: ${OB_UPDATES_PW}
         OBCONF_URL: ${OBCONF_URL}
         OBCONF_SALT: ${OBCONF_SALT}
@@ -52,28 +61,83 @@ services:
     ports:
       - "8080:80"
   ob-player:
-    depends_on:
-      - ob-server
     build:
       context: ./obplayer
       args:
         REPOSITORY: https://github.com/openbroadcaster/obplayer.git
         COMMIT: c971548
+    container_name: ob-player
+    # restart: always
+    depends_on:
+      - ob-server
     ports:
       - "8081:80"
+##### BELT
   belt:
     build: 
       context: ./belt
       args:
-        COMMIT: c7d7f06
+        COMMIT: c4b3943
         REPOSITORY: https://github.com/Radio-Eastern-FM/Belt.git
+    restart: always
+    container_name: belt
     depends_on:
       - ob-server
       - ob-player
       - studio-dashboard
     ports:
       - 3001:80
+    volumes:
+      - ./belt/nginx/belt.conf:/etc/nginx/conf.d/default.conf
+##### OBSERVABILITY
   telemetry:
+    container_name: telemetry
     image: otel/opentelemetry-collector-contrib
+    restart: always
     volumes:
       - ./telemetry/config.yaml:/etc/otel/config.yaml
+###### API
+  # api:
+  #   build:
+  #     context: ./api/apollo
+  #   depends_on:
+  #     - db
+  #   container_name: api
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: example
+  #     ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+  mongo-db:
+    image: mongo
+    container_name: mongo-db
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-db-data:/data/db
+      - mongo-db-config:/data/configdb
+      - ./api/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: MYDB
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    depends_on:
+      - mysql-db
+    ports:
+      - 8001:8080
+  mysql-db:
+    image: mysql
+    container_name: mysql-db
+    restart: always
+    volumes:
+      - mysql-db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+volumes:
+  mongo-db-data:
+  mongo-db-config:
+  mysql-db-data:

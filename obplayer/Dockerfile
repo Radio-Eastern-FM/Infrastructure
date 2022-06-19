@@ -47,7 +47,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 gstreamer1.0-vaapi \
 mesa-vdpau-drivers
 
-
 RUN \
 pip3 install boto3
 
@@ -81,7 +80,6 @@ ENV COMMIT=$COMMIT
 RUN git clone $REPOSITORY .
 RUN git checkout $COMMIT
 
-# ENTRYPOINT ["/bin/bash", "obplayer_loop"]
 ENTRYPOINT ["python3", "obplayer.py"]
 
 EXPOSE 80
