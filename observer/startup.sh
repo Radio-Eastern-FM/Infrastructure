@@ -13,9 +13,14 @@ echo "[OK] Begin startup"
 echo "[INFO] Testing NGINX configuration"
 nginx -t
 
+echo "[INFO] Running OB updates"
+php /var/www/html/updates/index.php force-update
+
+echo "[INFO] Updating password"
+php /var/www/html/tools/password_change.php "admin" "$OBCONF_PASS"
+
 echo "[INFO] Starting php7.4-fpm and mysql"
 service php7.4-fpm start
-service mysql start
 
 nginx -g 'daemon off;' &
 
@@ -26,4 +31,3 @@ echo "[OK] NGINX is running..."
 # Wait for SIGTERM (kill signal)
 child=$!
 wait "$child"
-

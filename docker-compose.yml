@@ -38,33 +38,35 @@ services:
   ob-server:
     restart: always
     container_name: ob-server
+    depends_on:
+      - mysql-db
     build:
       context: ./observer
       args:
         OBCONF_PASS: ${OBCONF_PASS}
         OBCONF_EMAIL: ${OBCONF_EMAIL}
-        OB_DB_USER: X
+        OB_DB_USER: ${MYSQL_USER}
         OB_DB_PASS: ${MYSQL_PASS}
-        OB_DB_HOST: X
-        OB_DB_NAME: X
+        OB_DB_HOST: mysql-db:3306
+        OB_DB_NAME: ${DBNAME}
         OB_UPDATES_PW: ${OB_UPDATES_PW}
         OBCONF_URL: ${OBCONF_URL}
         OBCONF_SALT: ${OBCONF_SALT}
         COMMIT: 1869edd
-        REPOSITORY: https://github.com/openbroadcaster/observer.git
         MODULE_NAMES: "bulk_import ob2ob data_and_statistics rds"
         MODULE_REPOSITORIES: "('https://github.com/openbroadcaster/bulk-import' 'https://github.com/openbroadcaster/ob2ob' 'https://github.com/openbroadcaster/statistics' 'https://github.com/openbroadcaster/rds')"
     volumes:
       - ./observer/nginx/observer.conf:/etc/nginx/sites-available/observer.conf
       - ./observer/startup.sh:/home/startup.sh
       - ./observer/www:/var/www/html
+    environment:
+      OBCONF_PASS: ${OBCONF_PASS}
     ports:
       - "8080:80"
   ob-player:
     build:
       context: ./obplayer
       args:
-        REPOSITORY: https://github.com/openbroadcaster/obplayer.git
         COMMIT: c971548
     container_name: ob-player
     # restart: always
@@ -78,7 +80,6 @@ services:
       context: ./belt
       args:
         COMMIT: c4b3943
-        REPOSITORY: https://github.com/Radio-Eastern-FM/Belt.git
     restart: always
     container_name: belt
     depends_on:
@@ -130,13 +131,22 @@ services:
     ports:
       - 8001:8080
   mysql-db:
-    image: mysql
+    cap_add:
+      - SYS_NICE
+    build:
+      context: ./observer/mysql
+      args:
+        COMMIT: 1869edd
     container_name: mysql-db
     restart: always
     volumes:
       - mysql-db-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: example
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASS}
+      MYSQL_DATABASE: ${DBNAME}
+      MYSQL_TCP_PORT: 3306
 volumes:
   mongo-db-data:
   mongo-db-config:

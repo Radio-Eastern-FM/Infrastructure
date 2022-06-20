@@ -58,9 +58,8 @@ ARG MYSQL_PASS
 ARG OB_UPDATES_PW
 ARG OBCONF_URL
 ARG OBCONF_SALT
-ARG DBNAME=obdb
-ARG MYSQL_HOST=localhost
-ARG MYSQL_PORT=3306
+ARG OB_DB_HOST=mysql-db:3306
+ARG OB_DB_NAME=obdb
 
 RUN useradd obsuser > /dev/null 2>&1  && \
   usermod -a -G obsuser obsuser > /dev/null 2>&1  && \
@@ -109,8 +108,8 @@ RUN echo '\
 const OB_HASH_SALT = "'$OBCONF_SALT'";\n\
 const OB_DB_USER = "'$USER'";\n\
 const OB_DB_PASS = "'$OB_DB_PASS'";\n\
-const OB_DB_HOST = "localhost:3306";\n\
-const OB_DB_NAME = "'$DBNAME'";\n\
+const OB_DB_HOST = "'OB_DB_HOST'";\n\
+const OB_DB_NAME = "'$OB_DB_NAME'";\n\
 const OB_MEDIA = "/home/media";\n\
 const OB_MEDIA_UPLOADS = "/home/media/uploads";\n\
 const OB_MEDIA_ARCHIVE = "/home/media/archive";\n\
@@ -124,12 +123,11 @@ const OB_UPDATES_PW = "'$OB_UPDATES_PW'";\n\
 ?>' >> /var/www/html/config.php;
 
 # MYSQL
-RUN service mysql start && mysqladmin create $DBNAME
-RUN service mysql start && mysql -u root -e "CREATE USER '$USER'@'localhost' IDENTIFIED BY '$MYSQL_PASS'; GRANT ALL PRIVILEGES ON $DBNAME. * TO '$USER'@'localhost'; FLUSH PRIVILEGES;"
-RUN service mysql start && mysql obdb < /var/www/html/db/dbclean.sql
-RUN service mysql start && /var/www/html/tools/password_change.php "admin" "$OBCONF_PASS"
+# RUN mysqladmin create $OB_DB_NAME
+# RUN mysql -u root -e "CREATE USER '$USER'@'localhost' IDENTIFIED BY '$MYSQL_PASS'; GRANT ALL PRIVILEGES ON $OB_DB_NAME. * TO '$USER'@'localhost'; FLUSH PRIVILEGES;"
+# RUN mysql obdb < /var/www/html/db/dbclean.sql
 
-RUN service mysql start && php /var/www/html/updates/index.php force-update
+# RUN /var/www/html/tools/password_change.php "admin" "$OBCONF_PASS" && exit 125
 
 COPY ./startup.sh /home/startup.sh
 
