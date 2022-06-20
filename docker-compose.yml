@@ -15,7 +15,7 @@ services:
     build: 
       context: ./studio-dashboard/event-source
       args:
-        COMMIT: d78a126
+        COMMIT: 9240ebb
         REPOSITORY: https://github.com/Radio-Eastern-FM/Event-Source-Service.git
     restart: always
     container_name: event-source
