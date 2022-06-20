@@ -98,16 +98,20 @@ services:
     volumes:
       - ./telemetry/config.yaml:/etc/otel/config.yaml
 ###### API
-  # api:
-  #   build:
-  #     context: ./api/apollo
-  #   depends_on:
-  #     - db
-  #   container_name: api
-  #   environment:
-  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
-  #     ME_CONFIG_MONGODB_ADMINPASSWORD: example
-  #     ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+  api:
+    build:
+      context: ./api/apollo
+      args:
+        COMMIT: 6ffc3b9
+    depends_on:
+      - mongo-db
+    container_name: api
+    ports:
+      - 4000:4000
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASS}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:27017/
   mongo-db:
     image: mongo
     container_name: mongo-db

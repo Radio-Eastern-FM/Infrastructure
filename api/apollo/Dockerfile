@@ -1,12 +1,17 @@
-FROM node:14
-ENV PORT 3080
+FROM node:14 AS builder
 
+# set working directory
 WORKDIR /app
-COPY ./package.json ./package-lock.json /app/
+
+ARG REPOSITORY=https://github.com/Radio-Eastern-FM/API.git
+ENV REPOSITORY=$REPOSITORY
+
+ARG COMMIT
+ENV COMMIT=$COMMIT
+
+RUN git clone $REPOSITORY .
+RUN git checkout $COMMIT
 
 RUN npm ci
 
-COPY . /app/
-
-EXPOSE ${PORT}
-CMD [ "npm", "start" ]
+ENTRYPOINT ["node", "server.js"]
