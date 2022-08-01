@@ -1,33 +1,30 @@
-FROM python:3
+FROM python:3-buster
 
-RUN apt-get update -y && apt-get upgrade -y
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y \
 ntp \
-python3 \
 python3-pycurl \
 python3-openssl \
 python3-apsw \
 python3-magic
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y \
 python3-dateutil \
 python3-requests
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y \
 python3-gi \
 python3-gi-cairo \
 gir1.2-gtk-3.0 \
 gir1.2-gdkpixbuf-2.0 \
 gir1.2-pango-1.0
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y \
 python3-gst-1.0 \
 gir1.2-gstreamer-1.0 \
 gir1.2-gst-plugins-base-1.0 \
 gir1.2-gst-rtsp-server-1.0
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y \
 gstreamer1.0-tools \
 gstreamer1.0-libav \
 gstreamer1.0-alsa \
@@ -37,27 +34,26 @@ gstreamer1.0-plugins-good \
 gstreamer1.0-plugins-bad \
 gstreamer1.0-plugins-ugly
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-ffmpeg
+RUN apt-get -y update && apt-get install -y ffmpeg
 
-RUN \
-pip3 install passlib[bcrypt]
+RUN pip3 install passlib[bcrypt]
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y \
 gstreamer1.0-vaapi \
 mesa-vdpau-drivers
 
-RUN \
-pip3 install boto3
+RUN pip3 install boto3
 
-RUN \
-pip3 install pulsectl pyrtlsdr inotify
+RUN pip3 install pulsectl pyrtlsdr inotify
 
-# RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get -y update && apt-get install -y libgirepository1.0-dev
+RUN pip3 install PyGObject pycairo
+
+# RUN apt-get -y update && apt-get install -y \
 # ubuntu-restricted-addons \
 # ubuntu-restricted-extras
 
-# RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+# RUN apt-get -y update && apt-get install -y \
 # espeak \
 # mbrola \
 # mbrola-en1 \
@@ -80,7 +76,14 @@ ENV COMMIT=$COMMIT
 RUN git clone $REPOSITORY .
 RUN git checkout $COMMIT
 
-ENTRYPOINT ["python3", "obplayer.py"]
+# BUGFIX
+
+RUN find . -type f -name "*.py" -exec sed -i 's/self.pipeline = Gst.Pipeline(name)/self.pipeline = Gst.Pipeline.new(name)/g' {} +
+
+# ENDBUGFIX
+
+ENTRYPOINT ["/bin/sleep", "5h"]
+# ENTRYPOINT ["/bin/bash", "./obplayer_loop"]
 
 EXPOSE 80
 EXPOSE 443

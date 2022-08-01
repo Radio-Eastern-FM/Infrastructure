@@ -129,6 +129,8 @@ const OB_UPDATES_PW = "'$OB_UPDATES_PW'";\n\
 
 # RUN /var/www/html/tools/password_change.php "admin" "$OBCONF_PASS" && exit 125
 
+RUN pip install ffmpeg-normalize
+
 COPY ./startup.sh /home/startup.sh
 
 ENTRYPOINT ["/bin/bash", "/home/startup.sh"]

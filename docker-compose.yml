@@ -8,6 +8,9 @@ services:
         COMMIT: d48fabd
         REPOSITORY: https://github.com/Radio-Eastern-FM/Studio-Dashboard.git
     restart: always
+    depends_on:
+      - mqtt
+      - event-source
     container_name: studio-dashboard
     ports:
       - 3000:80
@@ -59,6 +62,7 @@ services:
       - ./observer/nginx/observer.conf:/etc/nginx/sites-available/observer.conf
       - ./observer/startup.sh:/home/startup.sh
       - ./observer/www:/var/www/html
+      - ob-server-home:/home
     environment:
       OBCONF_PASS: ${OBCONF_PASS}
     ports:
@@ -73,7 +77,7 @@ services:
     depends_on:
       - ob-server
     ports:
-      - "8081:80"
+      - "8081:23233"
 ##### BELT
   belt:
     build: 
@@ -155,3 +159,4 @@ volumes:
   mongo-db-data:
   mongo-db-config:
   mysql-db-data:
+  ob-server-home:

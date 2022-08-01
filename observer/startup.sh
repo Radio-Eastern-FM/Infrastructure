@@ -19,7 +19,7 @@ php /var/www/html/updates/index.php force-update
 echo "[INFO] Updating password"
 php /var/www/html/tools/password_change.php "admin" "$OBCONF_PASS"
 
-echo "[INFO] Starting php7.4-fpm and mysql"
+echo "[INFO] Starting php7.4-fpm"
 service php7.4-fpm start
 
 nginx -g 'daemon off;' &
