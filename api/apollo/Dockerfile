@@ -14,4 +14,6 @@ RUN git checkout $COMMIT
 
 RUN npm ci
 
-ENTRYPOINT ["node", "server.js"]
+ENV DATABASE_HOST mongo-db
+
+ENTRYPOINT ["npm", "start"]

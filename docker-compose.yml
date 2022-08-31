@@ -55,7 +55,8 @@ services:
         OB_UPDATES_PW: ${OB_UPDATES_PW}
         OBCONF_URL: ${OBCONF_URL}
         OBCONF_SALT: ${OBCONF_SALT}
-        COMMIT: 1869edd
+        COMMIT: 3c730c4
+        REPOSITORY: https://github.com/Radio-Eastern-FM/observer.git
         MODULE_NAMES: "bulk_import ob2ob data_and_statistics rds"
         MODULE_REPOSITORIES: "('https://github.com/openbroadcaster/bulk-import' 'https://github.com/openbroadcaster/ob2ob' 'https://github.com/openbroadcaster/statistics' 'https://github.com/openbroadcaster/rds')"
     volumes:
@@ -73,7 +74,7 @@ services:
       args:
         COMMIT: c971548
     container_name: ob-player
-    # restart: always
+    restart: always
     depends_on:
       - ob-server
     ports:
@@ -94,6 +95,20 @@ services:
       - 3001:80
     volumes:
       - ./belt/nginx/belt.conf:/etc/nginx/conf.d/default.conf
+##### GRID VIEWER
+  grid-viewer:
+    build: 
+      context: ./grid-viewer
+      args:
+        COMMIT: 99b1c37
+    restart: always
+    container_name: grid-viewer
+    depends_on:
+      - api
+    ports:
+      - 3002:80
+    volumes:
+      - ./grid-viewer/nginx/grid-viewer.conf:/etc/nginx/conf.d/default.conf
 ##### OBSERVABILITY
   telemetry:
     container_name: telemetry
@@ -106,7 +121,7 @@ services:
     build:
       context: ./api/apollo
       args:
-        COMMIT: 6ffc3b9
+        COMMIT: 0e19193
     depends_on:
       - mongo-db
     container_name: api

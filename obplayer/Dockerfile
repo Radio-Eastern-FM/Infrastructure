@@ -64,6 +64,7 @@ RUN pip3 install PyGObject pycairo
 # mbrola-fr4
 
 RUN DEBIAN_FRONTEND=noninteractive pip3 install apsw pgi
+RUN DEBIAN_FRONTEND=noninteractive pip3 install python-magic requests
 
 WORKDIR /usr/src/app
 
@@ -82,8 +83,10 @@ RUN find . -type f -name "*.py" -exec sed -i 's/self.pipeline = Gst.Pipeline(nam
 
 # ENDBUGFIX
 
-ENTRYPOINT ["/bin/sleep", "5h"]
-# ENTRYPOINT ["/bin/bash", "./obplayer_loop"]
+# ENTRYPOINT ["/bin/sleep", "5h"]
+# ENTRYPOINT ["/usr/local/bin/python3", "obplayer.py"]
+# ENTRYPOINT ["/bin/bash", "obplayer_loop -d"]
+ENTRYPOINT /bin/bash ./obplayer_loop -H -d
 
 EXPOSE 80
 EXPOSE 443
